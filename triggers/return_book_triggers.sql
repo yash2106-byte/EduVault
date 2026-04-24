@@ -1,0 +1,10 @@
+-- RETURN BOOK (ISSUE 1001) - WILL BE HEAVILY OVERDUE SINCE DUE DATE WAS 2024
+CALL return_book(1001);
+
+-- VERIFY
+SELECT * FROM issue   WHERE issue_id = 1001;
+SELECT * FROM fine    WHERE issue_id = 1001;
+SELECT available_quantity FROM book WHERE book_id = 101;
+
+-- TRY RETURNING AGAIN - SHOULD FAIL
+CALL return_book(1001);
