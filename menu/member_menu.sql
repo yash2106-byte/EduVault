@@ -46,7 +46,7 @@ SELECT
     \i 'C:/Users/YASH/Desktop/dbms project/menu/member_menu.sql'
 
 \elif :do_back
-    \i 'C:/Users/YASH/Desktop/dbms project/menu/menu.sql'
+    \i 'C:/Users/YASH/Desktop/dbms project/sql/menu.sql'
 
 \else
     \echo 'Invalid choice.'

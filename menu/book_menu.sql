@@ -37,4 +37,13 @@ SELECT
     SELECT book_id, title, author, category,
            isbn, publisher, stock_quantity, available_quantity
     FROM book WHERE book_id = :p_bid;
-    \i 'C:/Users/YASH/Desktop/dbms project
+    \i 'C:/Users/YASH/Desktop/dbms project/menu/book_menu.sql'
+
+\elif :do_back
+    \i 'C:/Users/YASH/Desktop/dbms project/sql/menu.sql'
+
+\else
+    \echo 'Invalid choice.'
+    \i 'C:/Users/YASH/Desktop/dbms project/menu/book_menu.sql'
+
+\endif
