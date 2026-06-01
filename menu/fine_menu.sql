@@ -21,22 +21,22 @@ SELECT
     JOIN member m ON f.member_id = m.member_id
     WHERE f.payment_status = 'Pending'
     ORDER BY f.fine_amount DESC;
-    \i ../menu/fine_menu.sql
+    \irfine_menu.sql
 
 \elif :do_pay
     \prompt 'Fine ID to pay: ' p_fid
     CALL pay_fine(:p_fid);
-    \i ../menu/fine_menu.sql
+    \irfine_menu.sql
 
 \elif :do_calc
     \prompt 'Issue ID: ' p_iid
     SELECT calculate_fine(:p_iid) AS estimated_fine;
-    \i ../menu/fine_menu.sql
+    \irfine_menu.sql
 
 \elif :do_back
     \i ../sql/menu.sql
 
 \else
     \echo 'Invalid choice.'
-    \i ../menu/fine_menu.sql
+    \irfine_menu.sql
 \endif

@@ -29,7 +29,7 @@ SELECT
     JOIN member m ON i.member_id = m.member_id
     JOIN book   b ON i.book_id   = b.book_id
     WHERE i.status = 'Issued';
-    \i ../menu/reports_menu.sql
+    \irreports_menu.sql
 
 \elif :do_overdue
     SELECT i.issue_id, m.name, b.title, i.due_date,
@@ -40,7 +40,7 @@ SELECT
     JOIN book   b ON i.book_id   = b.book_id
     WHERE i.return_date IS NULL
       AND CURRENT_DATE > i.due_date;
-    \i ../menu/reports_menu.sql
+    \irreports_menu.sql
 
 \elif :do_topbooks
     SELECT b.title, b.author,
@@ -49,7 +49,7 @@ SELECT
     LEFT JOIN issue i ON b.book_id = i.book_id
     GROUP BY b.book_id, b.title, b.author
     ORDER BY total_issues DESC LIMIT 5;
-    \i ../menu/reports_menu.sql
+    \irreports_menu.sql
 
 \elif :do_fines
     SELECT m.name, m.phone,
@@ -57,7 +57,7 @@ SELECT
     FROM fine f
     JOIN member m ON f.member_id = m.member_id
     WHERE f.payment_status = 'Pending';
-    \i ../menu/reports_menu.sql
+    \irreports_menu.sql
 
 \elif :do_stock
     SELECT book_id, title, stock_quantity,
@@ -68,7 +68,7 @@ SELECT
                 ELSE 'Available'
            END AS stock_status
     FROM book ORDER BY available_quantity;
-    \i ../menu/reports_menu.sql
+    \irreports_menu.sql
 
 \elif :do_history
     SELECT m.name, m.department,
@@ -77,7 +77,7 @@ SELECT
     LEFT JOIN issue i ON m.member_id = i.member_id
     GROUP BY m.member_id, m.name, m.department
     ORDER BY total_borrowed DESC;
-    \i ../menu/reports_menu.sql
+    \irreports_menu.sql
 
 \elif :do_purchase
     SELECT item_type,
@@ -86,12 +86,12 @@ SELECT
     FROM purchases
     GROUP BY item_type
     ORDER BY total_spent DESC;
-    \i ../menu/reports_menu.sql
+    \irreports_menu.sql
 
 \elif :do_back
     \i ../sql/menu.sql
 
 \else
     \echo 'Invalid choice.'
-    \i ../menu/reports_menu.sql
+    \irreports_menu.sql
 \endif

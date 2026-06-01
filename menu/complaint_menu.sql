@@ -1,45 +1,49 @@
 \echo ''
-\echo '------------- COMPLAINTS -------------'
-\echo '1. Raise New Complaint'
-\echo '2. Resolve Complaint'
-\echo '3. View All Complaints'
+\echo '---------- BOOK MANAGEMENT ----------'
+\echo '1. Add New Book'
+\echo '2. View All Books'
+\echo '3. Search Book by ID'
 \echo '0. Back to Main Menu'
 \echo ''
-\prompt 'Enter choice: ' comp_choice
+\prompt 'Enter choice: ' book_choice
 
 SELECT
-    :'comp_choice' = '1' AS do_raise,
-    :'comp_choice' = '2' AS do_resolve,
-    :'comp_choice' = '3' AS do_viewall,
-    :'comp_choice' = '0' AS do_back
+    :'book_choice' = '1' AS do_add,
+    :'book_choice' = '2' AS do_viewall,
+    :'book_choice' = '3' AS do_search,
+    :'book_choice' = '0' AS do_back
 \gset
 
-\if :do_raise
-    \prompt 'Member ID   : ' p_mid
-    \prompt 'Category (Damaged Book/Missing Item/Fine Dispute/Facility/Other): ' p_cat
-    \prompt 'Description : ' p_desc
-    CALL raise_complaint(:p_mid, :'p_cat', :'p_desc');
-    \i ../menu/complaint_menu.sql
-
-\elif :do_resolve
-    \prompt 'Complaint ID : ' p_cid
-    \prompt 'Resolution   : ' p_res
-    CALL resolve_complaint(:p_cid, :'p_res');
-    \i ../menu/complaint_menu.sql
+\if :do_add
+    \prompt 'Book ID    : ' p_bid
+    \prompt 'Title      : ' p_title
+    \prompt 'Author     : ' p_author
+    \prompt 'Category   : ' p_cat
+    \prompt 'ISBN       : ' p_isbn
+    \prompt 'Publisher  : ' p_pub
+    \prompt 'Quantity   : ' p_qty
+    CALL add_book(:p_bid, :'p_title', :'p_author',
+                  :'p_cat', :'p_isbn', :'p_pub', :p_qty);
+    \ir book_menu.sql
 
 \elif :do_viewall
-    SELECT c.complaint_id, m.name AS member,
-           c.category, c.complaint_date,
-           c.status, c.resolution
-    FROM complaint c
-    JOIN member m ON c.member_id = m.member_id
-    ORDER BY c.complaint_id;
-    \i ../menu/complaint_menu.sql
+    SELECT book_id, title, author, category,
+           stock_quantity, available_quantity
+    FROM book ORDER BY book_id;
+    \ir book_menu.sql
+
+\elif :do_search
+    \prompt 'Enter Book ID: ' p_bid
+    SELECT book_id, title, author, category,
+           isbn, publisher, stock_quantity, available_quantity
+    FROM book WHERE book_id = :p_bid;
+    \ir book_menu.sql
 
 \elif :do_back
-    \i ../sql/menu.sql
+    \ir ../sql/menu.sql
 
 \else
     \echo 'Invalid choice.'
-    \i ../menu/complaint_menu.sql
+    \ir book_menu.sql
+
 \endif

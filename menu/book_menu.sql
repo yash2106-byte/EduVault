@@ -24,26 +24,26 @@ SELECT
     \prompt 'Quantity   : ' p_qty
     CALL add_book(:p_bid, :'p_title', :'p_author',
                   :'p_cat', :'p_isbn', :'p_pub', :p_qty);
-    \ir ../menu/book_menu.sql
+    \ir book_menu.sql
 
 \elif :do_viewall
     SELECT book_id, title, author, category,
            stock_quantity, available_quantity
     FROM book ORDER BY book_id;
-    \ir ../menu/book_menu.sql
+    \ir book_menu.sql
 
 \elif :do_search
     \prompt 'Enter Book ID: ' p_bid
     SELECT book_id, title, author, category,
            isbn, publisher, stock_quantity, available_quantity
     FROM book WHERE book_id = :p_bid;
-    \ir ../menu/book_menu.sql
+    \ir book_menu.sql
 
 \elif :do_back
     \ir ../sql/menu.sql
 
 \else
     \echo 'Invalid choice.'
-    \ir ../menu/book_menu.sql
+    \ir book_menu.sql
 
 \endif
