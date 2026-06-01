@@ -24,26 +24,26 @@ SELECT
     \prompt 'Quantity   : ' p_qty
     CALL add_book(:p_bid, :'p_title', :'p_author',
                   :'p_cat', :'p_isbn', :'p_pub', :p_qty);
-    \i 'C:/Users/YASH/Desktop/dbms project/menu/book_menu.sql'
+    \ir ../menu/book_menu.sql
 
 \elif :do_viewall
     SELECT book_id, title, author, category,
            stock_quantity, available_quantity
     FROM book ORDER BY book_id;
-    \i 'C:/Users/YASH/Desktop/dbms project/menu/book_menu.sql'
+    \ir ../menu/book_menu.sql
 
 \elif :do_search
     \prompt 'Enter Book ID: ' p_bid
     SELECT book_id, title, author, category,
            isbn, publisher, stock_quantity, available_quantity
     FROM book WHERE book_id = :p_bid;
-    \i 'C:/Users/YASH/Desktop/dbms project/menu/book_menu.sql'
+    \ir ../menu/book_menu.sql
 
 \elif :do_back
-    \i 'C:/Users/YASH/Desktop/dbms project/sql/menu.sql'
+    \ir ../sql/menu.sql
 
 \else
     \echo 'Invalid choice.'
-    \i 'C:/Users/YASH/Desktop/dbms project/menu/book_menu.sql'
+    \ir ../menu/book_menu.sql
 
 \endif

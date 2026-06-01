@@ -19,12 +19,12 @@ SELECT
     \prompt 'Book ID               : ' p_bid
     \prompt 'Due Date (YYYY-MM-DD) : ' p_due
     CALL issue_book(:p_mid, :p_bid, :'p_due'::DATE);
-    \i 'C:/Users/YASH/Desktop/dbms project/menu/issue_menu.sql'
+    \i ../menu/issue_menu.sql
 
 \elif :do_return
     \prompt 'Issue ID: ' p_iid
     CALL return_book(:p_iid);
-    \i 'C:/Users/YASH/Desktop/dbms project/menu/issue_menu.sql'
+    \i ../menu/issue_menu.sql
 
 \elif :do_viewall
     SELECT i.issue_id, m.name AS member, b.title AS book,
@@ -35,12 +35,12 @@ SELECT
     JOIN book   b ON i.book_id   = b.book_id
     WHERE i.status = 'Issued'
     ORDER BY days_overdue DESC;
-    \i 'C:/Users/YASH/Desktop/dbms project/menu/issue_menu.sql'
+    \i ../menu/issue_menu.sql
 
 \elif :do_back
-    \i 'C:/Users/YASH/Desktop/dbms project/sql/menu.sql'
+    \i ../sql/menu.sql
 
 \else
     \echo 'Invalid choice.'
-    \i 'C:/Users/YASH/Desktop/dbms project/menu/issue_menu.sql'
+    \i ../menu/issue_menu.sql
 \endif

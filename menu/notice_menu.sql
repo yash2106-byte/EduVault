@@ -19,7 +19,7 @@ SELECT
     \prompt 'Expiry Date (YYYY-MM-DD or press Enter to skip): ' p_exp
     CALL add_notice(:'p_title', :'p_content', :'p_type',
                     NULLIF(:'p_exp', '')::DATE);
-    \i 'C:/Users/YASH/Desktop/dbms project/menu/notice_menu.sql'
+    \i ../menu/notice_menu.sql
 
 \elif :do_viewall
     SELECT notice_id, title, notice_type,
@@ -27,12 +27,12 @@ SELECT
     FROM notice
     WHERE status = 'Active'
     ORDER BY posted_date DESC;
-    \i 'C:/Users/YASH/Desktop/dbms project/menu/notice_menu.sql'
+    \i ../menu/notice_menu.sql
 
 \elif :do_back
-    \i 'C:/Users/YASH/Desktop/dbms project/sql/menu.sql'
+    \i ../sql/menu.sql
 
 \else
     \echo 'Invalid choice.'
-    \i 'C:/Users/YASH/Desktop/dbms project/menu/notice_menu.sql'
+    \i ../menu/notice_menu.sql
 \endif

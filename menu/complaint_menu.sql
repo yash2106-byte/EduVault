@@ -19,13 +19,13 @@ SELECT
     \prompt 'Category (Damaged Book/Missing Item/Fine Dispute/Facility/Other): ' p_cat
     \prompt 'Description : ' p_desc
     CALL raise_complaint(:p_mid, :'p_cat', :'p_desc');
-    \i 'C:/Users/YASH/Desktop/dbms project/menu/complaint_menu.sql'
+    \i ../menu/complaint_menu.sql
 
 \elif :do_resolve
     \prompt 'Complaint ID : ' p_cid
     \prompt 'Resolution   : ' p_res
     CALL resolve_complaint(:p_cid, :'p_res');
-    \i 'C:/Users/YASH/Desktop/dbms project/menu/complaint_menu.sql'
+    \i ../menu/complaint_menu.sql
 
 \elif :do_viewall
     SELECT c.complaint_id, m.name AS member,
@@ -34,12 +34,12 @@ SELECT
     FROM complaint c
     JOIN member m ON c.member_id = m.member_id
     ORDER BY c.complaint_id;
-    \i 'C:/Users/YASH/Desktop/dbms project/menu/complaint_menu.sql'
+    \i ../menu/complaint_menu.sql
 
 \elif :do_back
-    \i 'C:/Users/YASH/Desktop/dbms project/sql/menu.sql'
+    \i ../sql/menu.sql
 
 \else
     \echo 'Invalid choice.'
-    \i 'C:/Users/YASH/Desktop/dbms project/menu/complaint_menu.sql'
+    \i ../menu/complaint_menu.sql
 \endif

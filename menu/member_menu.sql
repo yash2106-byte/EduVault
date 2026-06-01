@@ -25,30 +25,30 @@ SELECT
     \prompt 'Semester     : ' p_sem
     CALL register_member(:p_mid, :'p_name', :'p_phone',
                          :'p_email', :'p_dept', :p_sem, CURRENT_DATE);
-    \i 'C:/Users/YASH/Desktop/dbms project/menu/member_menu.sql'
+    \i ../menu/member_menu.sql
 
 \elif :do_deregister
     \prompt 'Member ID to deregister: ' p_mid
     CALL deregister_member(:p_mid);
-    \i 'C:/Users/YASH/Desktop/dbms project/menu/member_menu.sql'
+    \i ../menu/member_menu.sql
 
 \elif :do_viewall
     SELECT member_id, name, department, semester,
            phone, membership_status
     FROM member ORDER BY member_id;
-    \i 'C:/Users/YASH/Desktop/dbms project/menu/member_menu.sql'
+    \i ../menu/member_menu.sql
 
 \elif :do_search
     \prompt 'Enter Member ID: ' p_mid
     SELECT member_id, name, phone, email,
            department, semester, membership_status
     FROM member WHERE member_id = :p_mid;
-    \i 'C:/Users/YASH/Desktop/dbms project/menu/member_menu.sql'
+    \i ../menu/member_menu.sql
 
 \elif :do_back
-    \i 'C:/Users/YASH/Desktop/dbms project/sql/menu.sql'
+    \i ../sql/menu.sql
 
 \else
     \echo 'Invalid choice.'
-    \i 'C:/Users/YASH/Desktop/dbms project/menu/member_menu.sql'
+    \i ../menu/member_menu.sql
 \endif
