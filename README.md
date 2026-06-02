@@ -94,205 +94,207 @@ This project aims to design a database-centric library management platform where
 | **SQL Procedures** | Workflow and business process management |
 
 ---
-System Architecture
+## 🏗️ System Architecture
 
-The application follows a database-driven architecture where PostgreSQL acts as both the data layer and application logic layer.
+EduVault follows a **database-first architecture**, where PostgreSQL serves as both the **data storage layer** and the **application logic layer**. Instead of relying on an external backend framework, the system implements business workflows directly using **PL/pgSQL procedures, triggers, constraints, and psql-based interactive menus**.
 
-## Repository layout
+The architecture is divided into **three logical layers**:
 
+### 1. Presentation Layer — psql CLI
+
+The user interface is implemented using **menu-driven SQL scripts** inside the `psql` terminal.
+
+This layer:
+
+* Displays interactive menus
+* Captures user input using `\prompt`
+* Routes actions using `\if`, `\gset`, `\i`, and `\ir`
+* Executes procedures and queries
+
+Example components:
+
+* `sql/menu.sql` → Main entry point
+* `member_menu.sql` → Member operations
+* `book_menu.sql` → Book operations
+* `issue_menu.sql` → Issue & return workflow
+* `reports_menu.sql` → Reporting system
+
+### 2. Business Logic Layer — PL/pgSQL
+
+The business layer is implemented entirely inside PostgreSQL using **stored procedures, functions, and triggers**.
+
+Responsibilities include:
+
+* Member registration & deregistration
+* Book issue/return workflows
+* Fine calculation (`₹2/day overdue`)
+* Demand approval & purchase handling
+* Complaint management
+* Notice publishing
+
+Triggers additionally automate:
+
+* Member eligibility validation
+* Book availability checks
+* Stock synchronization
+* Automatic overdue fine creation
+
+### 3. Persistence Layer — Relational Database
+
+The persistence layer consists of **normalized relational tables** with strict constraints to maintain data integrity.
+
+Key features:
+
+* Foreign key relationships
+* CHECK constraints for controlled values
+* Indexed issue tracking (`member_id`, `book_id`)
+* Sequence-based issue IDs (`issue_seq`)
+* Automated stock and fine management
+
+The database schema includes entities such as:
+`member`, `book`, `issue`, `fine`, `demands`, `purchases`, `notice`, and `complaint`.
+
+### Architecture Flow
+
+```text
+User (Librarian/Admin)
+        ↓
+psql Menu Interface
+        ↓
+Stored Procedures / Functions / Triggers
+        ↓
+PostgreSQL Relational Database
 ```
-dbms project/
-├─ sql/
-│  ├─ schema.sql        # Tables, constraints, indexes, sequences
-│  ├─ sample_data.sql   # Seed data for quick testing
-│  ├─ reports.sql       # Standalone report queries
-│  ├─ reset.sql         # TRUNCATE all tables (development reset)
-│  └─ menu.sql          # Main entry menu (psql-driven UI)
-├─ procedures/
-│  ├─ member.sql        # register_member + related member logic
-│  ├─ add_book.sql
-│  ├─ issue_book.sql
-│  ├─ return_book.sql
-│  ├─ calculate_fine.sql  # function returning fine amount
-│  ├─ pay_fine.sql
-│  └─ ...               # demands/notices/complaints procedures
-├─ triggers/
-│  ├─ issue_book_triggers.sql
-│  ├─ return_book_triggers.sql
-│  └─ add_book_triggers.sql
-└─ menu/
-   ├─ member_menu.sql
-   ├─ book_menu.sql
-   ├─ issue_menu.sql
-   ├─ demand_menu.sql
-   ├─ fine_menu.sql
-   ├─ notice_menu.sql
-   ├─ complaint_menu.sql
-   └─ reports_menu.sql
+
+### System Architecture Diagram
+
+```mermaid
+flowchart LR
+    subgraph L1["Layer 1 — User Interface (psql)"]
+        M1["menu.sql"]
+        M2["sub menus"]
+    end
+
+    subgraph L2["Layer 2 — Business Logic"]
+        P1["Procedures"]
+        P2["Functions"]
+        P3["Triggers"]
+    end
+
+    subgraph L3["Layer 3 — Persistence"]
+        D1["Tables + Constraints"]
+        D2["Indexes + Sequences"]
+    end
+
+    L1 --> L2
+    L2 --> L3
 ```
 
----
-
-## Getting started (Windows)
+## ⚙️ Installation & Setup
 
 ### Prerequisites
-- PostgreSQL installed (Server + `psql` client)
-- A PostgreSQL role/user you can log in with (e.g. `postgres`)
 
-### Create a database
+Make sure you have the following installed:
 
-From PowerShell:
+* **PostgreSQL**
+* **psql CLI**
 
-```powershell
-psql -U postgres -c "CREATE DATABASE library_portal;"
+### Clone Repository
+
+```bash
+git clone https://github.com/yash2106-byte/EduVault.git
+cd EduVault
 ```
 
-### Bootstrap schema, procedures, triggers, and sample data
+### Create Database
 
-Run the following from the repo root (`C:\Users\YASH\Desktop\dbms project`):
-
-```powershell
-# 1) Create tables + constraints + indexes + sequences
-psql -U postgres -d library_portal -f "sql/schema.sql"
-
-# 2) Load procedures/functions
-psql -U postgres -d library_portal -f "procedures/member.sql"
-psql -U postgres -d library_portal -f "procedures/add_book.sql"
-psql -U postgres -d library_portal -f "procedures/issue_book.sql"
-psql -U postgres -d library_portal -f "procedures/return_book.sql"
-psql -U postgres -d library_portal -f "procedures/calculate_fine.sql"
-psql -U postgres -d library_portal -f "procedures/pay_fine.sql"
-psql -U postgres -d library_portal -f "procedures/demands_notices_complaints.sql"
-
-# 3) Load triggers
-psql -U postgres -d library_portal -f "triggers/issue_book_triggers.sql"
-psql -U postgres -d library_portal -f "triggers/return_book_triggers.sql"
-psql -U postgres -d library_portal -f "triggers/add_book_triggers.sql"
-
-# 4) Seed test data (optional but recommended)
-psql -U postgres -d library_portal -f "sql/sample_data.sql"
+```sql
+CREATE DATABASE library_portal;
 ```
 
-> Note: If you add more procedures later, include them in this bootstrap list (or create a single `sql/bootstrap.sql` that `\i` includes everything).
+### Load Schema
 
----
-
-## Running the interactive menu (psql UI)
-
-Start the main menu:
-
-```powershell
-psql -U postgres -d library_portal -f "sql/menu.sql"
+```bash
+psql -d library_portal -f sql/schema.sql
 ```
 
-You’ll see:
-- Member Management
-- Book Management
-- Issue and Return
-- Demands and Purchases
-- Fines
-- Notices and Announcements
-- Complaints
-- Reports
+### Load Procedures
 
-### Important note about paths inside `sql/menu.sql`
-Your current `sql/menu.sql` uses **absolute Windows paths** (for example `C:/Users/YASH/Desktop/dbms project/menu/...`).
-That works on your machine but will break for other users or if the folder is moved.
-
-**Recommended production-style approach**:
-- Prefer **relative includes** (e.g. `\i '../menu/member_menu.sql'`) and run `psql` from a consistent working directory (repo root).
-
----
-
-## Database design (high level)
-
-### Main entities
-- **`member`**: library members with eligibility status (`Active`, `Suspended`, etc.)
-- **`book`**: inventory + availability counters (`stock_quantity`, `available_quantity`)
-- **`issue`**: issue transactions including due dates and status (`Issued`, `Returned`, `Overdue`, `Lost`)
-- **`fine`**: computed overdue fines with payment status (`Pending`, `Paid`, `Waived`)
-
-### Supporting entities
-- **`demands`** and **`purchases`**: acquisition workflow
-- **`journals`** and **`periodicals`**: non-book library items
-- **`notice`**: announcements
-- **`complaint`**: issue tracking & resolution
-- **`disposal`**: disposal log for damaged/obsolete/lost items
-
----
-
-## Business rules & automation
-
-### Issuing a book
-- **Eligibility**: member must exist and be `Active`
-- **Availability**: book must have `available_quantity > 0`
-- **Stock adjustment**: availability decreases on issue
-
-These are enforced both by:
-- **Stored procedure**: `issue_book(member_id, book_id, due_date)`
-- **Triggers** (defensive checks + auto-updates): see `triggers/issue_book_triggers.sql`
-
-### Returning a book
-- Marks issue as `Returned`, sets `return_date`
-- Increases `available_quantity`
-- Calculates and records fine if overdue (if not already present)
-
-Implemented via:
-- `return_book(issue_id)` in `procedures/return_book.sql`
-- `calculate_fine(issue_id)` in `procedures/calculate_fine.sql`
-
----
-
-## Reports
-
-You can run reports in two ways:
-- **From the UI**: `menu/reports_menu.sql`
-- **Direct SQL**: `sql/reports.sql`
-
-Examples included:
-- currently issued books
-- overdue issues + estimated fine
-- top borrowed books
-- members with pending fines
-- book stock status
-- purchase summary by item type
-- complaints summary
-
----
-
-## Operations (reset / dev workflow)
-
-### Reset all tables (development only)
-This will delete data from all tables:
-
-```powershell
-psql -U postgres -d library_portal -f "sql/reset.sql"
+```bash
+psql -d library_portal -f procedures/member.sql
+psql -d library_portal -f procedures/issue_book.sql
 ```
 
-Then optionally reseed:
+### Load Triggers
 
-```powershell
-psql -U postgres -d library_portal -f "sql/sample_data.sql"
+```bash
+psql -d library_portal -f triggers/issue_book_triggers.sql
+```
+
+### Seed Sample Data
+
+```bash
+psql -d library_portal -f sql/sample_data.sql
+```
+
+### Run Application
+
+```bash
+psql -d library_portal -f sql/menu.sql
 ```
 
 ---
 
-## Troubleshooting
+## 🔄 Example Workflow
 
-- **`psql` not found**: add PostgreSQL `bin/` to PATH (or use “SQL Shell (psql)” installed with PostgreSQL).
-- **Permission denied / auth errors**: verify `pg_hba.conf` settings and that your role can connect to the database.
-- **Menus fail after moving the folder**: update the absolute paths inside `sql/menu.sql` (or convert to relative includes as recommended above).
-
----
-
-## Quality checklist (industry-style)
-- **Reproducible setup**: schema + procedures + triggers + seed data scripts
-- **Integrity-first modeling**: FK constraints + status checks + numeric validation
-- **Auditable workflows**: issue history, fine records, complaint lifecycle
-- **Operational scripts**: reset and reports
+1. **Register Member**
+2. **Add Book**
+3. **Issue Book**
+4. **Return Book**
+5. **Fine gets generated automatically (if overdue)**
 
 ---
 
-## License
+## ⚠️ Known Limitations
 
-Add a license if you plan to publish this repository publicly (MIT/Apache-2.0 are common defaults for student projects).
+* Some menu scripts contain **path dependencies**
+* Complaint menu is still **under development**
+* Trigger/procedure overlap may cause **double stock decrement** during issue flow
+* Overdue automation can be improved further
+
+---
+
+## 🚀 Future Improvements
+
+* Add **authentication & role-based access**
+* Add **Docker support**
+* Build an **analytics dashboard**
+* Add **Email/SMS notifications**
+
+---
+
+## 📚 Learning Outcomes
+
+This project helped in understanding:
+
+* Database normalization
+* Stored procedures
+* Trigger-based automation
+* Relational constraints
+* Transaction handling
+* Database-driven architecture
+
+---
+
+## 👨‍💻 Author
+
+**Yash Raj**
+*Computer Science Undergraduate | Backend & Database Enthusiast*
+
+📧 **Email:** [rajyash2510@gmail.com](mailto:rajyash2510@gmail.com)
+<br>🌐 **Portfolio:** https://yashcode.me
+<br>💻 **GitHub:** https://github.com/yash2106-byte
+
+
+
+
