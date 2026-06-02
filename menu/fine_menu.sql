@@ -34,7 +34,7 @@ SELECT
     \irfine_menu.sql
 
 \elif :do_back
-    \i ../sql/menu.sql
+    \ir ../sql/menu.sql
 
 \else
     \echo 'Invalid choice.'
