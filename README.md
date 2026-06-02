@@ -1,181 +1,298 @@
-## 📌 Overview
+# 📚 EduVault — PostgreSQL Based Library Management System
+### Overview
 
-EduVault is a menu-driven CLI application that combines two academic projects into one production-quality system. It demonstrates real-world database design using advanced PostgreSQL features alongside a clean Python application layer.
+EduVault is a menu-driven Library Management System built entirely using PostgreSQL and operated through the psql CLI, without relying on a separate backend framework or web application.
+
+The project demonstrates how database systems can function as complete application layers by combining relational schema design, stored procedures, triggers, constraints, and interactive SQL scripting.
+
+### Demo
+
+<p align="center">
+  <img src="./assets/eduvault-demo.gif" alt="EduVault Demo" width="900"/>
+</p>
+A quick walkthrough of EduVault running through the PostgreSQL CLI interface.
+
+
+This system automates core library operations such as member management, book issue/return, overdue fine calculation, demand handling, notices, complaints, and reporting.
+
+### Problem Statement
+---
+Traditional library systems require efficient management of books, members, issue-return transactions, overdue penalties, and administrative workflows.
+
+This project aims to design a database-centric library management platform where business logic is handled directly inside PostgreSQL using stored procedures, triggers, and constraints instead of an external application server.
 
 ---
 
 ## ✨ Features
 
-### 📚 Student Module
-- Add, view, update, and delete student records
-- Unique student IDs via PostgreSQL sequences
+### 👤 Member Management
 
-### 📖 Library Module
-- Issue and return books with timestamped records
-- View all issued/returned book history per student
+* Register new members
+* Deregister members with validation checks
+* Search and view member details
+* Manage membership status
 
-### 📝 Examination Module
-- Store and retrieve subject-wise marks
-- Auto-calculate grades using PostgreSQL triggers
+### 📖 Book Management
 
-### 💰 Account Module
-- Record fee details and payments
-- View fee status (paid / balance remaining)
+* Add books to inventory
+* Search and view books
+* Track stock quantity
+* Monitor book availability
 
----
+### 🔄 Issue & Return Management
 
-## 🛠️ Tech Stack
+* Issue books with eligibility validation
+* Return books seamlessly
+* Automatic stock updates
+* Prevent duplicate book issuance
 
-| Layer | Technology |
-|---|---|
-| Language | Python 3.x |
-| Database | PostgreSQL |
-| DB Connector | psycopg2 |
-| Interface | Menu-driven CLI |
+### 💰 Fine Management
 
----
+* Automatic overdue fine calculation
+* Fine payment workflow
+* Track pending fines
 
-## 🗃️ Database Schema
+### 📦 Demand & Purchase System
 
-### Students
-```sql
-student_id  SERIAL PRIMARY KEY
-name        VARCHAR(100)
-age         INTEGER
-course      VARCHAR(100)
-```
+* Raise acquisition demands
+* Approve purchase requests
+* Track purchases
+* Automatic stock updates after purchase
 
-### Library
-```sql
-book_id     SERIAL PRIMARY KEY
-student_id  INTEGER REFERENCES students(student_id)
-book_name   VARCHAR(200)
-issue_date  DATE
-return_date DATE
-```
+### 📢 Notice Management
 
-### Examination
-```sql
-exam_id     SERIAL PRIMARY KEY
-student_id  INTEGER REFERENCES students(student_id)
-subject     VARCHAR(100)
-marks       NUMERIC(5,2)
-grade       CHAR(2)
-```
+* Post library announcements
+* Expiry-based notice handling
+* Multiple notice categories
 
-### Account
-```sql
-account_id  SERIAL PRIMARY KEY
-student_id  INTEGER REFERENCES students(student_id)
-total_fee   NUMERIC(10,2)
-paid_fee    NUMERIC(10,2)
-balance     NUMERIC(10,2) GENERATED ALWAYS AS (total_fee - paid_fee) STORED
-```
+### 🛠 Complaint Handling
+
+* Raise complaints
+* Track complaint resolution
+* Manage complaint lifecycle
+
+### 📊 Reports & Analytics
+
+* Issued books report
+* Overdue books analysis
+* Top borrowed books report
+* Purchase summaries
+* Pending fines report
+* Stock availability insights
+
 
 ---
 
-## ⚙️ Advanced PostgreSQL Concepts Used
+## 🛠 Tech Stack
 
-| Concept | Usage |
-|---|---|
-| **Triggers** | Auto-calculate grade when marks are inserted/updated |
-| **Stored Procedures** | Fee payment processing |
-| **Sequences** | Auto-increment student, book, exam IDs |
-| **Constraints** | NOT NULL, FOREIGN KEY, CHECK constraints |
-| **Indices** | On student_id across all tables for fast lookups |
-| **Views** | Student dashboard summary view |
-| **Cursors** | Used in report generation procedures |
+| Technology         | Purpose                                  |
+| ------------------ | ---------------------------------------- |
+| **PostgreSQL**     | Database engine                          |
+| **PL/pgSQL**       | Business logic implementation            |
+| **psql CLI**       | Interactive command-line interface       |
+| **SQL Triggers**   | Automation and event handling            |
+| **SQL Procedures** | Workflow and business process management |
 
 ---
+System Architecture
 
-## 📁 Project Structure
+The application follows a database-driven architecture where PostgreSQL acts as both the data layer and application logic layer.
+
+## Repository layout
 
 ```
-eduvault/
-│
-├── README.md
-│
-├── docs/
-│   ├── er_diagram.png          # Entity-Relationship Diagram
-│   └── schema.md               # Relational schema details
-│
-├── sql/
-│   ├── ddl.sql                 # CREATE TABLE statements
-│   ├── triggers.sql            # Grade auto-calculation trigger
-│   ├── procedures.sql          # Stored procedures
-│   └── sample_data.sql         # Seed data for testing
-│
-├── src/
-│   ├── main.py                 # Entry point & main menu
-│   ├── db.py                   # PostgreSQL connection handler
-│   ├── student.py              # Student module
-│   ├── library.py              # Library module
-│   ├── examination.py          # Examination module
-│   └── accounts.py             # Accounts module
-│
-└── screenshots/
-    └── *.png                   # Sample output screenshots
+dbms project/
+├─ sql/
+│  ├─ schema.sql        # Tables, constraints, indexes, sequences
+│  ├─ sample_data.sql   # Seed data for quick testing
+│  ├─ reports.sql       # Standalone report queries
+│  ├─ reset.sql         # TRUNCATE all tables (development reset)
+│  └─ menu.sql          # Main entry menu (psql-driven UI)
+├─ procedures/
+│  ├─ member.sql        # register_member + related member logic
+│  ├─ add_book.sql
+│  ├─ issue_book.sql
+│  ├─ return_book.sql
+│  ├─ calculate_fine.sql  # function returning fine amount
+│  ├─ pay_fine.sql
+│  └─ ...               # demands/notices/complaints procedures
+├─ triggers/
+│  ├─ issue_book_triggers.sql
+│  ├─ return_book_triggers.sql
+│  └─ add_book_triggers.sql
+└─ menu/
+   ├─ member_menu.sql
+   ├─ book_menu.sql
+   ├─ issue_menu.sql
+   ├─ demand_menu.sql
+   ├─ fine_menu.sql
+   ├─ notice_menu.sql
+   ├─ complaint_menu.sql
+   └─ reports_menu.sql
 ```
 
 ---
 
-## 🚀 Getting Started
+## Getting started (Windows)
 
 ### Prerequisites
+- PostgreSQL installed (Server + `psql` client)
+- A PostgreSQL role/user you can log in with (e.g. `postgres`)
 
-- Python 3.8+
-- PostgreSQL 13+
-- psycopg2 library
+### Create a database
 
-### Installation
+From PowerShell:
 
-```bash
-# 1. Clone the repository
-git clone https://github.com/your-username/eduvault.git
-cd eduvault
+```powershell
+psql -U postgres -c "CREATE DATABASE library_portal;"
+```
 
-# 2. Install dependencies
-pip install psycopg2-binary
+### Bootstrap schema, procedures, triggers, and sample data
 
-# 3. Set up the database
-psql -U postgres -c "CREATE DATABASE eduvault;"
-psql -U postgres -d eduvault -f sql/ddl.sql
-psql -U postgres -d eduvault -f sql/triggers.sql
-psql -U postgres -d eduvault -f sql/procedures.sql
+Run the following from the repo root (`C:\Users\YASH\Desktop\dbms project`):
 
-# 4. Configure DB connection
-# Edit src/db.py with your PostgreSQL credentials
+```powershell
+# 1) Create tables + constraints + indexes + sequences
+psql -U postgres -d library_portal -f "sql/schema.sql"
 
-# 5. Run the application
-python src/main.py
+# 2) Load procedures/functions
+psql -U postgres -d library_portal -f "procedures/member.sql"
+psql -U postgres -d library_portal -f "procedures/add_book.sql"
+psql -U postgres -d library_portal -f "procedures/issue_book.sql"
+psql -U postgres -d library_portal -f "procedures/return_book.sql"
+psql -U postgres -d library_portal -f "procedures/calculate_fine.sql"
+psql -U postgres -d library_portal -f "procedures/pay_fine.sql"
+psql -U postgres -d library_portal -f "procedures/demands_notices_complaints.sql"
+
+# 3) Load triggers
+psql -U postgres -d library_portal -f "triggers/issue_book_triggers.sql"
+psql -U postgres -d library_portal -f "triggers/return_book_triggers.sql"
+psql -U postgres -d library_portal -f "triggers/add_book_triggers.sql"
+
+# 4) Seed test data (optional but recommended)
+psql -U postgres -d library_portal -f "sql/sample_data.sql"
+```
+
+> Note: If you add more procedures later, include them in this bootstrap list (or create a single `sql/bootstrap.sql` that `\i` includes everything).
+
+---
+
+## Running the interactive menu (psql UI)
+
+Start the main menu:
+
+```powershell
+psql -U postgres -d library_portal -f "sql/menu.sql"
+```
+
+You’ll see:
+- Member Management
+- Book Management
+- Issue and Return
+- Demands and Purchases
+- Fines
+- Notices and Announcements
+- Complaints
+- Reports
+
+### Important note about paths inside `sql/menu.sql`
+Your current `sql/menu.sql` uses **absolute Windows paths** (for example `C:/Users/YASH/Desktop/dbms project/menu/...`).
+That works on your machine but will break for other users or if the folder is moved.
+
+**Recommended production-style approach**:
+- Prefer **relative includes** (e.g. `\i '../menu/member_menu.sql'`) and run `psql` from a consistent working directory (repo root).
+
+---
+
+## Database design (high level)
+
+### Main entities
+- **`member`**: library members with eligibility status (`Active`, `Suspended`, etc.)
+- **`book`**: inventory + availability counters (`stock_quantity`, `available_quantity`)
+- **`issue`**: issue transactions including due dates and status (`Issued`, `Returned`, `Overdue`, `Lost`)
+- **`fine`**: computed overdue fines with payment status (`Pending`, `Paid`, `Waived`)
+
+### Supporting entities
+- **`demands`** and **`purchases`**: acquisition workflow
+- **`journals`** and **`periodicals`**: non-book library items
+- **`notice`**: announcements
+- **`complaint`**: issue tracking & resolution
+- **`disposal`**: disposal log for damaged/obsolete/lost items
+
+---
+
+## Business rules & automation
+
+### Issuing a book
+- **Eligibility**: member must exist and be `Active`
+- **Availability**: book must have `available_quantity > 0`
+- **Stock adjustment**: availability decreases on issue
+
+These are enforced both by:
+- **Stored procedure**: `issue_book(member_id, book_id, due_date)`
+- **Triggers** (defensive checks + auto-updates): see `triggers/issue_book_triggers.sql`
+
+### Returning a book
+- Marks issue as `Returned`, sets `return_date`
+- Increases `available_quantity`
+- Calculates and records fine if overdue (if not already present)
+
+Implemented via:
+- `return_book(issue_id)` in `procedures/return_book.sql`
+- `calculate_fine(issue_id)` in `procedures/calculate_fine.sql`
+
+---
+
+## Reports
+
+You can run reports in two ways:
+- **From the UI**: `menu/reports_menu.sql`
+- **Direct SQL**: `sql/reports.sql`
+
+Examples included:
+- currently issued books
+- overdue issues + estimated fine
+- top borrowed books
+- members with pending fines
+- book stock status
+- purchase summary by item type
+- complaints summary
+
+---
+
+## Operations (reset / dev workflow)
+
+### Reset all tables (development only)
+This will delete data from all tables:
+
+```powershell
+psql -U postgres -d library_portal -f "sql/reset.sql"
+```
+
+Then optionally reseed:
+
+```powershell
+psql -U postgres -d library_portal -f "sql/sample_data.sql"
 ```
 
 ---
 
-## 📸 Sample Output
+## Troubleshooting
 
-```
-========================================
-     EDUVAULT — STUDENT PORTAL
-========================================
-1. Student Management
-2. Library Management
-3. Examination Records
-4. Fee & Accounts
-5. Exit
-========================================
-Enter your choice:
-```
-
-*(Screenshots in /screenshots folder)*
+- **`psql` not found**: add PostgreSQL `bin/` to PATH (or use “SQL Shell (psql)” installed with PostgreSQL).
+- **Permission denied / auth errors**: verify `pg_hba.conf` settings and that your role can connect to the database.
+- **Menus fail after moving the folder**: update the absolute paths inside `sql/menu.sql` (or convert to relative includes as recommended above).
 
 ---
 
-## 📄 Project Report Contents
+## Quality checklist (industry-style)
+- **Reproducible setup**: schema + procedures + triggers + seed data scripts
+- **Integrity-first modeling**: FK constraints + status checks + numeric validation
+- **Auditable workflows**: issue history, fine records, complaint lifecycle
+- **Operational scripts**: reset and reports
 
-- [x] Problem Statement
-- [x] ER Diagram and Relational Schema
-- [x] DDL with Constraints
-- [x] Menu and Sub-menu Layouts
-- [x] Program Code
-- [x] Sample Outputs
+---
+
+## License
+
+Add a license if you plan to publish this repository publicly (MIT/Apache-2.0 are common defaults for student projects).
