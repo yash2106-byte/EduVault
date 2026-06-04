@@ -5,21 +5,45 @@ EduVault is a menu-driven Library Management System built entirely using Postgre
 
 The project demonstrates how database systems can function as complete application layers by combining relational schema design, stored procedures, triggers, constraints, and interactive SQL scripting.
 
-### Demo
+### 🚀 Project Highlights
 
+- Built a complete Library Management System using **PostgreSQL only**
+- Implemented **database-first architecture** without a backend framework
+- Designed **stored procedures, triggers, and constraints** for business logic
+- Created a **menu-driven CLI system using psql**
+- Automated workflows like **fine calculation, stock updates, and issue validation**
+
+## 💡 Why This Project?
+
+Most CRUD projects rely heavily on backend frameworks.
+
+EduVault explores a different approach by treating PostgreSQL as the primary application layer and implementing workflows directly inside the database using procedures, triggers, and constraints.
+
+### Demo
 <p align="center">
   <img src="./assets/eduvault-demo.gif" alt="EduVault Demo" width="900"/>
 </p>
-A quick walkthrough of EduVault running through the PostgreSQL CLI interface.
 
+#### Main Menu
+<p align="center">
+  <img src="./assets/main_menu.png" alt="Main Menu SS" width="900"/>
+</p>
 
-This system automates core library operations such as member management, book issue/return, overdue fine calculation, demand handling, notices, complaints, and reporting.
+#### Reports
+<p align="center">
+  <img src="./assets/reports.png" alt="Reports" width="900"/>
+</p>
+
+#### Issue
+<p align="center">
+  <img src="./assets/issue.png" alt="Issue" width="900"/>
+</p>
 
 ### Problem Statement
 ---
-Traditional library systems require efficient management of books, members, issue-return transactions, overdue penalties, and administrative workflows.
+Managing books, members, issue-return workflows, fines, and purchase requests manually becomes inefficient as libraries scale.
 
-This project aims to design a database-centric library management platform where business logic is handled directly inside PostgreSQL using stored procedures, triggers, and constraints instead of an external application server.
+EduVault solves this problem through a PostgreSQL-driven management system where core business logic is implemented directly inside the database using stored procedures, triggers, and constraints.
 
 ---
 
@@ -192,13 +216,7 @@ flowchart LR
 
 ## ⚙️ Installation & Setup
 
-### Prerequisites
-
-Make sure you have the following installed:
-
-* **PostgreSQL**
-* **psql CLI**
-
+NOTE - Make sure to run commands from the project root directory.
 ### Clone Repository
 
 ```bash
@@ -212,29 +230,10 @@ cd EduVault
 CREATE DATABASE library_portal;
 ```
 
-### Load Schema
+### Setup Project
 
 ```bash
-psql -d library_portal -f sql/schema.sql
-```
-
-### Load Procedures
-
-```bash
-psql -d library_portal -f procedures/member.sql
-psql -d library_portal -f procedures/issue_book.sql
-```
-
-### Load Triggers
-
-```bash
-psql -d library_portal -f triggers/issue_book_triggers.sql
-```
-
-### Seed Sample Data
-
-```bash
-psql -d library_portal -f sql/sample_data.sql
+psql -d library_portal -f setup.sql
 ```
 
 ### Run Application
@@ -242,8 +241,6 @@ psql -d library_portal -f sql/sample_data.sql
 ```bash
 psql -d library_portal -f sql/menu.sql
 ```
-
----
 
 ## 🔄 Example Workflow
 
@@ -289,7 +286,8 @@ This project helped in understanding:
 ## 👨‍💻 Author
 
 **Yash Raj**
-*Computer Science Undergraduate | Backend & Database Enthusiast*
+Computer Science Undergraduate passionate about
+Backend Engineering, Databases, and Distributed Systems.
 
 📧 **Email:** [rajyash2510@gmail.com](mailto:rajyash2510@gmail.com)
 <br>🌐 **Portfolio:** https://yashcode.me
