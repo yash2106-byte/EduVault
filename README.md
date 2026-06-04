@@ -286,7 +286,7 @@ This project helped in understanding:
 ## 👨‍💻 Author
 
 **Yash Raj**
-Computer Science Undergraduate passionate about
+- Computer Science Undergraduate passionate about
 Backend Engineering, Databases, and Distributed Systems.
 
 📧 **Email:** [rajyash2510@gmail.com](mailto:rajyash2510@gmail.com)
