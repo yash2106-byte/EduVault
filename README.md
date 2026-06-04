@@ -290,7 +290,7 @@ Computer Science Undergraduate passionate about
 Backend Engineering, Databases, and Distributed Systems.
 
 📧 **Email:** [rajyash2510@gmail.com](mailto:rajyash2510@gmail.com)
-<br>🌐 **Portfolio:** https://yashcode.me
+<br>🌐 **Portfolio:** https://yashcodes.me
 <br>💻 **GitHub:** https://github.com/yash2106-byte
 
 
